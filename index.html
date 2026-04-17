@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <!-- A tag viewport é essencial para funcionar bem no mobile, desabilitando o zoom duplo do iOS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quiz de Conhecimentos Gerais</title>
+    <style>
+        /* Variáveis de cores para facilitar o tema */
+        :root {
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --correct: #10b981;
+            --incorrect: #ef4444;
+            --gray: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        #app {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 500px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Telas */
+        .screen {
+            display: none;
+            flex-direction: column;
+            gap: 1.5rem;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        /* Botões */
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            touch-action: manipulation; /* Melhora a resposta ao toque no mobile */
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .option-btn {
+            background-color: #f8fafc;
+            color: var(--text-color);
+            border: 2px solid #e2e8f0;
+            margin-bottom: 0.75rem;
+            text-align: left;
+            padding: 1rem 1.25rem;
+        }
+
+        .option-btn.correct {
+            background-color: var(--correct);
+            border-color: var(--correct);
+            color: white;
+        }
+
+        .option-btn.incorrect {
+            background-color: var(--incorrect);
+            border-color: var(--incorrect);
+            color: white;
+        }
+
+        .option-btn:disabled {
+            opacity: 0.8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Elementos de progresso */
+        .progress-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gray);
+        }
+
+        .score-text {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        <!-- TELA INICIAL -->
+        <div id="start-screen" class="screen active">
+            <h1>Quiz de Conhecimentos</h1>
+            <p>Teste seus conhecimentos com 5 perguntas rápidas. Preparado?</p>
+            <button onclick="startGame()" style="margin-top: 1rem;">Começar Jogo</button>
+        </div>
+
+        <!-- TELA DO JOGO -->
+        <div id="game-screen" class="screen">
+            <div class="progress-container">
+                <span id="question-progress">Pergunta 1/5</span>
+                <span id="score-display">Pontos: 0</span>
+            </div>
+            
+            <h2 id="question-text">Texto da pergunta aqui?</h2>
+            
+            <div id="options-container">
+                <!-- Os botões de opções serão inseridos aqui via JavaScript -->
+            </div>
+        </div>
+
+        <!-- TELA FINAL -->
+        <div id="end-screen" class="screen">
+            <h1>Fim de Jogo!</h1>
+            <p>Sua pontuação final foi:</p>
+            <div class="score-text" id="final-score">0/5</div>
+            <p id="feedback-message">Muito bem!</p>
+            <button onclick="restartGame()" style="margin-top: 1rem;">Jogar Novamente</button>
+        </div>
+    </div>
+
+    <script>
+        // Banco de perguntas (Esboço inicial com 5 perguntas)
+        const questions = [
+            {
+                question: "Qual é o maior planeta do Sistema Solar?",
+                options: ["Terra", "Marte", "Júpiter", "Saturno"],
+                answerIndex: 2 // Júpiter
+            },
+            {
+                question: "Quem pintou a famosa obra 'Mona Lisa'?",
+                options: ["Vincent van Gogh", "Pablo Picasso", "Michelangelo", "Leonardo da Vinci"],
+                answerIndex: 3 // Leonardo da Vinci
+            },
+            {
+                question: "Qual é o elemento químico cujo símbolo é a letra 'O'?",
+                options: ["Ouro", "Oxigênio", "Ósmio", "Prata"],
+                answerIndex: 1 // Oxigênio
+            },
+            {
+                question: "Em que ano o homem pisou na Lua pela primeira vez?",
+                options: ["1959", "1965", "1969", "1971"],
+                answerIndex: 2 // 1969
+            },
+            {
+                question: "Qual é a capital da Austrália?",
+                options: ["Sydney", "Melbourne", "Camberra", "Brisbane"],
+                answerIndex: 2 // Camberra
+            }
+        ];
+
+        // Variáveis de estado do jogo
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        // Elementos do DOM
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const endScreen = document.getElementById('end-screen');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const questionProgress = document.getElementById('question-progress');
+        const scoreDisplay = document.getElementById('score-display');
+        const finalScore = document.getElementById('final-score');
+        const feedbackMessage = document.getElementById('feedback-message');
+
+        // Função para alternar entre as telas
+        function showScreen(screenElement) {
+            startScreen.classList.remove('active');
+            gameScreen.classList.remove('active');
+            endScreen.classList.remove('active');
+            screenElement.classList.add('active');
+        }
+
+        // Inicia o jogo
+        function startGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            updateScoreDisplay();
+            loadQuestion();
+            showScreen(gameScreen);
+        }
+
+        // Carrega a pergunta atual
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            
+            // Atualiza textos
+            questionText.textContent = currentQuestion.question;
+            questionProgress.textContent = `Pergunta ${currentQuestionIndex + 1}/${questions.length}`;
+            
+            // Limpa as opções anteriores
+            optionsContainer.innerHTML = '';
+
+            // Cria os botões para cada opção
+            currentQuestion.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.classList.add('option-btn');
+                button.onclick = () => checkAnswer(index, button);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        // Verifica a resposta do jogador
+        function checkAnswer(selectedIndex, selectedButton) {
+            const currentQuestion = questions[currentQuestionIndex];
+            const correctIndex = currentQuestion.answerIndex;
+            const allButtons = optionsContainer.querySelectorAll('.option-btn');
+
+            // Desabilita todos os botões para evitar múltiplos cliques
+            allButtons.forEach(btn => btn.disabled = true);
+
+            // Verifica se acertou ou errou
+            if (selectedIndex === correctIndex) {
+                selectedButton.classList.add('correct');
+                score++;
+                updateScoreDisplay();
+            } else {
+                selectedButton.classList.add('incorrect');
+                // Mostra qual era a certa
+                allButtons[correctIndex].classList.add('correct');
+            }
+
+            // Aguarda um momento para mostrar o resultado e passa para a próxima
+            setTimeout(() => {
+                currentQuestionIndex++;
+                
+                if (currentQuestionIndex < questions.length) {
+                    loadQuestion();
+                } else {
+                    endGame();
+                }
+            }, 1200); // 1.2 segundos de espera
+        }
+
+        // Atualiza a pontuação na tela durante o jogo
+        function updateScoreDisplay() {
+            scoreDisplay.textContent = `Pontos: ${score}`;
+        }
+
+        // Finaliza o jogo e mostra o resultado
+        function endGame() {
+            finalScore.textContent = `${score} / ${questions.length}`;
+            
+            // Mensagem personalizada baseada no resultado
+            if (score === questions.length) {
+                feedbackMessage.textContent = "Perfeito! Você sabe tudo!";
+            } else if (score >= 3) {
+                feedbackMessage.textContent = "Muito bem! Bom conhecimento geral.";
+            } else {
+                feedbackMessage.textContent = "Continue praticando, na próxima você vai melhor!";
+            }
+
+            showScreen(endScreen);
+        }
+
+        // Reinicia o jogo
+        function restartGame() {
+            startGame();
+        }
+    </script>
+</body>
+</html>
