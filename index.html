@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <!-- Viewport otimizado para mobile: sem zoom duplo, escala 1:1 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aventura da Metrologia</title>
+    <title>Metrologia: Introdução</title>
     <style>
         :root {
             --bg-color: #f4f7f6;
@@ -90,8 +90,8 @@
 
         .instruction {
             text-align: center;
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-size: 1.2rem;
+            font-weight: 700;
             margin-bottom: 20px;
             color: var(--primary-dark);
         }
@@ -116,14 +116,31 @@
             box-shadow: 0 4px 6px rgba(14, 165, 233, 0.3);
         }
 
-        .btn-main:active {
-            transform: scale(0.97);
-        }
+        .btn-main:active { transform: scale(0.97); }
+        .btn-main:disabled { background-color: var(--gray-border); box-shadow: none; cursor: not-allowed; }
 
-        .btn-main:disabled {
-            background-color: var(--gray-border);
-            box-shadow: none;
-            cursor: not-allowed;
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 15px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn-outline:active { background-color: #e0f2fe; transform: scale(0.97); }
+
+        /* Tela Inicial Melhorada */
+        .hero-icon {
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .intro-box {
+            background: #f8fafc;
+            border: 1px solid var(--gray-border);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 25px;
         }
 
         /* Stage 1: Associação */
@@ -155,10 +172,24 @@
         .quiz-btn.incorrect { background-color: var(--incorrect); color: white; border-color: var(--incorrect); }
 
         /* Stage 4: Tempo */
+        .timer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .counter-badge {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
         .timer-bar-container { width: 100%; height: 8px; background: #e2e8f0; border-radius: 4px; margin-bottom: 10px; overflow: hidden; }
         .timer-bar-fill { height: 100%; background: var(--secondary); width: 100%; transition: width 0.1s linear, background-color 0.3s; }
-        .timer-text { text-align: center; font-size: 2rem; font-weight: bold; color: var(--secondary); margin-bottom: 5px; transition: color 0.3s; }
-        .tf-container { display: flex; gap: 15px; margin-top: auto; margin-bottom: 20px; }
+        .timer-text { font-size: 1.8rem; font-weight: bold; color: var(--secondary); transition: color 0.3s; }
+        .tf-container { display: flex; gap: 15px; margin-top: auto; margin-bottom: 10px; }
         .tf-btn { flex: 1; padding: 20px 10px; font-size: 1.1rem; background: white; border: 2px solid var(--gray-border); }
         .tf-btn:active { transform: scale(0.95); }
 
@@ -175,7 +206,7 @@
         .feedback-icon { font-size: 4rem; margin-bottom: 10px; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .score-display { text-align: center; font-size: 2.5rem; color: var(--primary); font-weight: bold; margin: 10px 0; }
+        .score-display { text-align: center; font-size: 2.2rem; color: var(--primary); font-weight: bold; margin: 10px 0; }
         .bonus-score { text-align: center; font-size: 1.5rem; color: var(--secondary); font-weight: bold; margin-bottom: 25px; }
 
     </style>
@@ -184,40 +215,45 @@
 
     <div id="app">
         <div class="header">
-            <h1>Aventura da Metrologia</h1>
-            <p id="stage-subtitle">Introdução à Ciência da Medição</p>
+            <h1>Metrologia: Introdução</h1>
+            <p id="stage-subtitle">Ciência da Medição</p>
         </div>
         <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
 
-        <!-- TELA INICIAL -->
+        <!-- TELA INICIAL MELHORADA -->
         <div id="start-screen" class="screen active">
-            <div style="text-align: center; margin-top: 20px;">
-                <h2 style="color: var(--primary-dark); margin-bottom: 15px;">Bem-vindo à aula!</h2>
-                <p style="color: var(--text-light); line-height: 1.5; margin-bottom: 20px;">
-                    Hoje vamos testar seus conhecimentos sobre Metrologia em 4 etapas! Incluindo um desafio final contra o tempo.
+            <div class="hero-icon">📏📐</div>
+            <h2 style="color: var(--primary-dark); text-align: center; margin-bottom: 15px;">Bem-vindo à Aula!</h2>
+            
+            <div class="intro-box">
+                <p style="color: var(--text-light); line-height: 1.5; text-align: center;">
+                    Teste os seus conhecimentos sobre as bases da Metrologia. Avance pelas etapas de <strong>Associação</strong>, <strong>Classificação</strong>, <strong>Questionário</strong> e um <strong>Desafio contra o Tempo</strong>.
                 </p>
-                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230ea5e9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='10'></circle><polyline points='12 6 12 12 16 14'></polyline></svg>" alt="Icon" style="width: 80px; margin-bottom: 30px;">
             </div>
-            <button class="btn-main" onclick="startStage1()">Iniciar Etapa 1</button>
+
+            <div style="margin-top: auto;">
+                <button class="btn-main" onclick="startStage1()">Iniciar Treino Completo</button>
+                <button class="btn-outline" onclick="skipToStage4()">Saltar direto para a Etapa 4</button>
+            </div>
         </div>
 
         <!-- ETAPA 1: ASSOCIAÇÃO -->
         <div id="stage1-screen" class="screen">
             <div class="instruction">Etapa 1: Ligue os Termos</div>
-            <p style="text-align: center; font-size: 0.9rem; margin-bottom: 15px;">Toque em um termo da esquerda e depois no seu significado à direita.</p>
+            <p style="text-align: center; font-size: 0.9rem; margin-bottom: 15px; color: var(--text-light);">Toque num termo da esquerda e depois no seu significado correspondente à direita.</p>
             
             <div class="match-container">
                 <div class="match-column" id="terms-col"></div>
                 <div class="match-column" id="defs-col"></div>
             </div>
             
-            <button class="btn-main" id="btn-next-stage1" onclick="startStage2()" disabled style="margin-top: 20px;">Ir para Etapa 2</button>
+            <button class="btn-main" id="btn-next-stage1" onclick="startStage2()" disabled style="margin-top: 20px;">Ir para a Etapa 2</button>
         </div>
 
         <!-- ETAPA 2: CLASSIFICAÇÃO -->
         <div id="stage2-screen" class="screen">
             <div class="instruction">Etapa 2: Qual é o Segmento?</div>
-            <p style="text-align: center; font-size: 0.9rem; margin-bottom: 15px;">Leia a situação e classifique o tipo de Metrologia.</p>
+            <p style="text-align: center; font-size: 0.9rem; margin-bottom: 15px; color: var(--text-light);">Leia a situação e classifique qual o tipo de Metrologia aplicado.</p>
             
             <div class="scenario-card" id="scenario-text"></div>
             
@@ -230,20 +266,38 @@
 
         <!-- ETAPA 3: QUIZ -->
         <div id="stage3-screen" class="screen">
-            <div class="instruction">Etapa 3: Quiz</div>
+            <div class="instruction">Etapa 3: Revisão Rápida</div>
             <div class="quiz-question" id="quiz-question-text"></div>
             <div class="quiz-options" id="quiz-options-container"></div>
         </div>
 
-        <!-- ETAPA 4: TEMPO -->
-        <div id="stage4-screen" class="screen">
+        <!-- ETAPA 4: TELA DE INTRODUÇÃO -->
+        <div id="stage4-intro-screen" class="screen">
             <div class="instruction">Etapa 4: Contra o Tempo!</div>
-            <p style="text-align: center; font-size: 0.9rem; margin-bottom: 10px;">Verdadeiro ou Falso. Mais rápido = Mais pontos!</p>
+            
+            <div class="intro-box" style="margin-top: 20px; border-left: 4px solid var(--secondary);">
+                <h3 style="color: var(--primary-dark); margin-bottom: 15px;">Como funciona o desafio:</h3>
+                <ul style="margin-left: 20px; line-height: 1.8; color: var(--text-light);">
+                    <li>Tem <strong>10 segundos</strong> para cada pergunta.</li>
+                    <li>Leia a afirmação e responda <strong>Verdadeiro</strong> ou <strong>Falso</strong>.</li>
+                    <li>O cronómetro não pára!</li>
+                    <li>Quanto mais rápido responder, mais <strong>pontos bónus</strong> irá acumular!</li>
+                </ul>
+            </div>
 
-            <div class="timer-text" id="timer-text">10.0s</div>
+            <button class="btn-main" style="background-color: var(--secondary);" onclick="startStage4()">Começar Desafio</button>
+        </div>
+
+        <!-- ETAPA 4: O JOGO (TEMPO) -->
+        <div id="stage4-screen" class="screen">
+            <div class="timer-header">
+                <div class="timer-text" id="timer-text">10.0s</div>
+                <div class="counter-badge" id="time-question-counter">1 / 10</div>
+            </div>
+            
             <div class="timer-bar-container"><div class="timer-bar-fill" id="timer-bar"></div></div>
 
-            <div class="quiz-question" id="time-question-text" style="flex:1; display:flex; align-items:center; justify-content:center;">
+            <div class="quiz-question" id="time-question-text" style="flex:1; display:flex; align-items:center; justify-content:center; font-size: 1.3rem;">
                 <!-- Gerado via JS -->
             </div>
 
@@ -257,13 +311,13 @@
         <div id="end-screen" class="screen">
             <div style="text-align: center; margin-top: 20px;">
                 <h2 style="color: var(--primary-dark);">Missão Cumprida!</h2>
-                <div class="score-display" id="final-score">Treinamento Concluído!</div>
-                <div class="bonus-score" id="bonus-score-display">0 pts Bônus</div>
+                <div class="score-display" id="final-score">Treino Concluído!</div>
+                <div class="bonus-score" id="bonus-score-display">0 pts Bónus</div>
                 <p id="final-message" style="color: var(--text-light); line-height: 1.5; margin-bottom: 20px;">
-                    Excelente trabalho. Você dominou os conceitos iniciais da Metrologia e demonstrou rapidez e precisão!
+                    Excelente trabalho! Reviu os conceitos de Metrologia e comprovou a sua agilidade de raciocínio.
                 </p>
             </div>
-            <button class="btn-main" onclick="location.reload()">Jogar Novamente</button>
+            <button class="btn-main" onclick="location.reload()">Início</button>
         </div>
 
         <!-- Overlay de Feedback -->
@@ -275,7 +329,7 @@
     </div>
 
     <script>
-        // --- DADOS DO JOGO (Expandidos) ---
+        // --- DADOS DO JOGO ---
 
         // Etapa 1
         const matchData = [
@@ -284,31 +338,36 @@
             { id: 3, term: "VIM", def: "Vocabulário Internacional de Termos" }
         ];
 
-        // Etapa 2 - MAIS PERGUNTAS ADICIONADAS
+        // Etapa 2
         const classifyData = [
             { text: "Lida com os padrões de medição internacionais e pesquisas de alto nível laboratorial.", type: "Científica" },
             { text: "Garante a confiabilidade das medições realizadas no dia a dia dentro de uma fábrica.", type: "Industrial" },
-            { text: "Controla e fiscaliza balanças de supermercado e bombas de combustível, visando a proteção do consumidor.", type: "Legal" },
+            { text: "Controla e fiscaliza balanças de supermercados e bombas de combustível, visando a proteção do consumidor.", type: "Legal" },
             { text: "Realiza pesquisas para aprimorar as definições do Sistema Internacional de Unidades (SI).", type: "Científica" },
-            { text: "Realiza a calibração de instrumentos de medição (como paquímetros) na linha de produção de automóveis.", type: "Industrial" }
+            { text: "Realiza a calibração de instrumentos de medição na linha de produção de automóveis.", type: "Industrial" }
         ];
 
         // Etapa 3
         const quizData = [
             { q: "Qual é a origem da palavra Metrologia?", opts: ["Latim: Metro + Logia", "Grego: Metron (medida) + Logos (ciência)", "Inglês: Meter + Logic"], ans: 1 },
-            { q: "Segundo Lord Kelvin, o que acontece quando não podemos expressar algo em números?", opts: ["O conhecimento é limitado e insatisfatório.", "A medição se torna obsoleta.", "Devemos usar apenas a metrologia industrial."], ans: 0 }
+            { q: "Segundo Lord Kelvin, o que acontece quando não podemos expressar algo em números?", opts: ["O conhecimento é limitado e insatisfatório.", "A medição torna-se obsoleta.", "Devemos usar apenas a metrologia industrial."], ans: 0 }
         ];
 
-        // Etapa 4 - NOVO DESAFIO DE TEMPO
+        // Etapa 4 - 10 Questões Expandidas
         const timeAttackData = [
             { q: "O INMETRO é um órgão que atua exclusivamente fora do Brasil.", ans: false },
             { q: "O Sistema Internacional de Unidades é conhecido pela sigla SI.", ans: true },
-            { q: "A Metrologia Legal é a que protege o consumidor em transações comerciais.", ans: true },
-            { q: "Na palavra grega Metrologia, 'metron' significa 'ciência'.", ans: false },
-            { q: "Segundo o VIM, a Metrologia abrange os aspectos teóricos e práticos relativos às medições.", ans: true }
+            { q: "A Metrologia Legal protege o consumidor em transações comerciais.", ans: true },
+            { q: "Na palavra Metrologia, 'metron' significa 'ciência'.", ans: false },
+            { q: "A Metrologia abrange os aspetos teóricos e práticos das medições.", ans: true },
+            { q: "A primeira definição do metro baseava-se no tamanho do pé do rei.", ans: false },
+            { q: "Atualmente, o metro é definido pela velocidade da luz no vácuo.", ans: true },
+            { q: "O Cúbito Real Egípcio é considerado um dos primeiros padrões de medida da história.", ans: true },
+            { q: "A Metrologia Industrial lida com a fiscalização de radares nas rodovias.", ans: false },
+            { q: "Sir William Thomson (Lord Kelvin) defendia que a medição deve ser expressa em números.", ans: true }
         ];
 
-        // --- VARIÁVEIS DE ESTADO ---
+        // --- VARIÁVEIS GERAIS ---
         let currentProgress = 0;
         let totalSteps = matchData.length + classifyData.length + quizData.length + timeAttackData.length;
         
@@ -330,11 +389,11 @@
 
             if(isCorrect) {
                 icon.textContent = "✅";
-                title.innerHTML = `Correto!<br><span style="font-size:1rem; color:#666;">${extraText}</span>`;
+                title.innerHTML = `Correto!<br><span style="font-size:1.2rem; color:#64748b;">${extraText}</span>`;
                 title.style.color = "var(--correct)";
             } else {
                 icon.textContent = "❌";
-                title.innerHTML = "Incorreto!";
+                title.innerHTML = `Incorreto!<br><span style="font-size:1rem; color:#64748b;">${extraText}</span>`;
                 title.style.color = "var(--incorrect)";
             }
 
@@ -343,6 +402,14 @@
                 overlay.style.display = 'none';
                 if(callback) callback();
             }, 1200);
+        }
+
+        function skipToStage4() {
+            // Ajusta o progresso para preencher as etapas saltadas
+            currentProgress = matchData.length + classifyData.length + quizData.length;
+            const pct = (currentProgress / totalSteps) * 100;
+            document.getElementById('progress').style.width = pct + '%';
+            showStage4Intro();
         }
 
         // --- ETAPA 1: ASSOCIAÇÃO ---
@@ -403,7 +470,7 @@
 
         function startStage2() {
             showScreen('stage2-screen');
-            document.getElementById('stage-subtitle').textContent = "Etapa 2: Pilares da Metrologia";
+            document.getElementById('stage-subtitle').textContent = "Pilares da Metrologia";
             loadScenario();
         }
 
@@ -430,7 +497,7 @@
 
         function startStage3() {
             showScreen('stage3-screen');
-            document.getElementById('stage-subtitle').textContent = "Etapa 3: Revisão";
+            document.getElementById('stage-subtitle').textContent = "Revisão Rápida";
             loadQuiz();
         }
 
@@ -448,7 +515,7 @@
                     optsContainer.appendChild(btn);
                 });
             } else {
-                startStage4(); // Alterado para ir para a etapa 4
+                showStage4Intro();
             }
         }
 
@@ -468,16 +535,21 @@
             }, 1500);
         }
 
-        // --- ETAPA 4: DESAFIO CONTRA O TEMPO ---
+        // --- ETAPA 4: INTRO E DESAFIO CONTRA O TEMPO ---
         let currentTimeAttack = 0;
         let timerInterval;
         let timeLeft;
         const TIME_LIMIT = 10.0;
         let bonusPoints = 0;
 
+        function showStage4Intro() {
+            showScreen('stage4-intro-screen');
+            document.getElementById('stage-subtitle').textContent = "Avaliando Rapidez";
+        }
+
         function startStage4() {
             showScreen('stage4-screen');
-            document.getElementById('stage-subtitle').textContent = "Etapa 4: Desafio Final";
+            document.getElementById('stage-subtitle').textContent = "Contra o Tempo!";
             loadTimeAttack();
         }
 
@@ -485,6 +557,9 @@
             if(currentTimeAttack < timeAttackData.length) {
                 const qData = timeAttackData[currentTimeAttack];
                 document.getElementById('time-question-text').textContent = qData.q;
+                
+                // Atualiza o contador de perguntas (Ex: 1 / 10)
+                document.getElementById('time-question-counter').textContent = `${currentTimeAttack + 1} / ${timeAttackData.length}`;
 
                 // Reset botões
                 document.querySelectorAll('.tf-btn').forEach(b => {
@@ -497,13 +572,13 @@
                 timeLeft = TIME_LIMIT;
                 updateTimerUI();
 
-                // Loop do cronômetro
+                // Loop do cronómetro (100ms)
                 timerInterval = setInterval(() => {
                     timeLeft -= 0.1;
                     if(timeLeft <= 0) {
                         timeLeft = 0;
                         clearInterval(timerInterval);
-                        checkTimeAttack(null, null); // Tempo esgotado
+                        checkTimeAttack(null, null); // Força tempo esgotado
                     }
                     updateTimerUI();
                 }, 100);
@@ -518,7 +593,7 @@
             const pct = (timeLeft / TIME_LIMIT) * 100;
             document.getElementById('timer-bar').style.width = pct + '%';
 
-            // Muda de cor quando o tempo está acabando (< 3 segundos)
+            // Alerta visual (< 3 segundos)
             if(timeLeft < 3) {
                 document.getElementById('timer-bar').style.backgroundColor = 'var(--incorrect)';
                 document.getElementById('timer-text').style.color = 'var(--incorrect)';
@@ -544,7 +619,7 @@
                     btn.style.color = 'white';
                 }
                 
-                // Calcula pontos: 100 pontos por cada segundo restante
+                // Pontuação Bónus baseada no tempo
                 let pointsEarned = Math.floor(timeLeft * 100);
                 bonusPoints += pointsEarned;
                 extraText = `+${pointsEarned} pts`;
@@ -560,7 +635,7 @@
                     btn.style.borderColor = 'var(--incorrect)';
                     btn.style.color = 'white';
                 }
-                extraText = isTimeout ? "Tempo Esgotado!" : "";
+                extraText = isTimeout ? "Tempo Esgotado!" : "Resposta Errada";
                 
                 showFeedback(false, () => {
                     currentTimeAttack++;
@@ -572,9 +647,10 @@
         function showEndScreen() {
             showScreen('end-screen');
             document.getElementById('stage-subtitle').textContent = "Resultados";
-            document.getElementById('bonus-score-display').textContent = `${bonusPoints} Pontos de Bônus!`;
+            document.getElementById('bonus-score-display').textContent = `${bonusPoints} Pontos de Bónus!`;
         }
 
     </script>
 </body>
 </html>
+```
