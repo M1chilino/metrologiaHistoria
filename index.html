@@ -2,324 +2,562 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <!-- A tag viewport é essencial para funcionar bem no mobile, desabilitando o zoom duplo do iOS -->
+    <!-- Viewport otimizado para mobile: sem zoom duplo, escala 1:1 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Quiz de Conhecimentos Gerais</title>
+    <title>Aventura da Metrologia</title>
     <style>
-        /* Variáveis de cores para facilitar o tema */
         :root {
-            --bg-color: #f0f4f8;
+            --bg-color: #f4f7f6;
             --card-bg: #ffffff;
-            --text-color: #333333;
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --secondary: #8b5cf6;
             --correct: #10b981;
             --incorrect: #ef4444;
-            --gray: #9ca3af;
+            --text-main: #1e293b;
+            --text-light: #64748b;
+            --gray-border: #cbd5e1;
+            --btn-radius: 12px;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg-color);
-            color: var(--text-color);
+            color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 1rem;
+            padding: 15px;
         }
 
         #app {
             background-color: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             width: 100%;
-            max-width: 500px;
-            padding: 2rem 1.5rem;
-            text-align: center;
-            position: relative;
+            max-width: 450px;
+            min-height: 85vh; /* Ocupa a maior parte da tela mobile */
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
+            position: relative;
         }
 
-        /* Telas */
+        /* Top Bar */
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Screens */
         .screen {
             display: none;
+            flex: 1;
             flex-direction: column;
-            gap: 1.5rem;
-            animation: fadeIn 0.3s ease-in-out;
+            padding: 20px;
+            animation: slideIn 0.4s ease forwards;
         }
 
         .screen.active {
             display: flex;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
-        h1 {
-            font-size: 1.75rem;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        h2 {
-            font-size: 1.25rem;
-            line-height: 1.4;
-            margin-bottom: 1rem;
-        }
-
-        p {
-            font-size: 1rem;
-            color: #666;
-        }
-
-        /* Botões */
-        button {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 1rem;
+        .instruction {
+            text-align: center;
             font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary-dark);
+        }
+
+        /* Buttons Base */
+        button {
+            border: none;
+            border-radius: var(--btn-radius);
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
+            touch-action: manipulation;
+        }
+
+        .btn-main {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px;
             width: 100%;
-            touch-action: manipulation; /* Melhora a resposta ao toque no mobile */
+            margin-top: auto;
+            box-shadow: 0 4px 6px rgba(14, 165, 233, 0.3);
         }
 
-        button:active {
-            transform: scale(0.98);
+        .btn-main:active {
+            transform: scale(0.97);
         }
 
-        .option-btn {
-            background-color: #f8fafc;
-            color: var(--text-color);
-            border: 2px solid #e2e8f0;
-            margin-bottom: 0.75rem;
-            text-align: left;
-            padding: 1rem 1.25rem;
-        }
-
-        .option-btn.correct {
-            background-color: var(--correct);
-            border-color: var(--correct);
-            color: white;
-        }
-
-        .option-btn.incorrect {
-            background-color: var(--incorrect);
-            border-color: var(--incorrect);
-            color: white;
-        }
-
-        .option-btn:disabled {
-            opacity: 0.8;
+        .btn-main:disabled {
+            background-color: var(--gray-border);
+            box-shadow: none;
             cursor: not-allowed;
-            transform: none;
         }
 
-        /* Elementos de progresso */
-        .progress-container {
+        /* Stage 1: Associação */
+        .match-container {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
+            gap: 15px;
+            flex: 1;
+        }
+        .match-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .match-btn {
+            background-color: #f8fafc;
+            border: 2px solid var(--gray-border);
+            color: var(--text-main);
+            padding: 12px 10px;
             font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--gray);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .match-btn.selected {
+            border-color: var(--primary);
+            background-color: #e0f2fe;
+        }
+        .match-btn.matched {
+            border-color: var(--correct);
+            background-color: #d1fae5;
+            color: #065f46;
+            opacity: 0.7;
+            pointer-events: none;
         }
 
-        .score-text {
-            font-size: 3rem;
-            font-weight: bold;
-            color: var(--primary);
-            margin: 1rem 0;
+        /* Stage 2: Classificação */
+        .scenario-card {
+            background-color: #f1f5f9;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-left: 5px solid var(--secondary);
         }
+        .classify-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .classify-btn {
+            background-color: white;
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+            padding: 15px;
+        }
+        .classify-btn:active { background-color: #ede9fe; }
+
+        /* Stage 3: Quiz */
+        .quiz-question {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .quiz-btn {
+            background-color: white;
+            border: 2px solid var(--gray-border);
+            padding: 15px;
+            text-align: left;
+        }
+        .quiz-btn.correct { background-color: var(--correct); color: white; border-color: var(--correct); }
+        .quiz-btn.incorrect { background-color: var(--incorrect); color: white; border-color: var(--incorrect); }
+
+        /* Progress Bar */
+        .progress-bar {
+            height: 6px;
+            background-color: #e2e8f0;
+            width: 100%;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: var(--correct);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Feedback UI */
+        .feedback-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.9);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            animation: fadeIn 0.2s;
+        }
+        .feedback-icon { font-size: 4rem; margin-bottom: 10px; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .score-display {
+            text-align: center;
+            font-size: 3rem;
+            color: var(--primary);
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
     </style>
 </head>
 <body>
 
     <div id="app">
+        <div class="header">
+            <h1>Aventura da Metrologia</h1>
+            <p id="stage-subtitle">Introdução à Ciência da Medição</p>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
         <!-- TELA INICIAL -->
         <div id="start-screen" class="screen active">
-            <h1>Quiz de Conhecimentos</h1>
-            <p>Teste seus conhecimentos com 5 perguntas rápidas. Preparado?</p>
-            <button onclick="startGame()" style="margin-top: 1rem;">Começar Jogo</button>
+            <div style="text-align: center; margin-top: 20px;">
+                <h2 style="color: var(--primary-dark); margin-bottom: 15px;">Bem-vindo à aula!</h2>
+                <p style="color: var(--text-light); line-height: 1.5; margin-bottom: 20px;">
+                    Hoje vamos testar seus conhecimentos sobre Metrologia em 3 etapas diferentes.
+                    Você precisará associar termos, classificar cenários e responder ao quiz final.
+                </p>
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230ea5e9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='10'></circle><polyline points='12 6 12 12 16 14'></polyline></svg>" alt="Icon" style="width: 80px; margin-bottom: 30px;">
+            </div>
+            <button class="btn-main" onclick="startStage1()">Iniciar Etapa 1</button>
         </div>
 
-        <!-- TELA DO JOGO -->
-        <div id="game-screen" class="screen">
-            <div class="progress-container">
-                <span id="question-progress">Pergunta 1/5</span>
-                <span id="score-display">Pontos: 0</span>
+        <!-- ETAPA 1: ASSOCIAÇÃO -->
+        <div id="stage1-screen" class="screen">
+            <div class="instruction">Etapa 1: Ligue os Termos</div>
+            <p style="text-align: center; font-size: 0.9rem; margin-bottom: 15px;">Toque em um termo da esquerda e depois no seu significado à direita.</p>
+            
+            <div class="match-container">
+                <div class="match-column" id="terms-col">
+                    <!-- Gerado via JS -->
+                </div>
+                <div class="match-column" id="defs-col">
+                    <!-- Gerado via JS -->
+                </div>
             </div>
             
-            <h2 id="question-text">Texto da pergunta aqui?</h2>
+            <button class="btn-main" id="btn-next-stage1" onclick="startStage2()" disabled style="margin-top: 20px;">Ir para Etapa 2</button>
+        </div>
+
+        <!-- ETAPA 2: CLASSIFICAÇÃO -->
+        <div id="stage2-screen" class="screen">
+            <div class="instruction">Etapa 2: Qual é o Segmento?</div>
+            <p style="text-align: center; font-size: 0.9rem; margin-bottom: 15px;">Leia a situação e classifique o tipo de Metrologia.</p>
             
-            <div id="options-container">
-                <!-- Os botões de opções serão inseridos aqui via JavaScript -->
+            <div class="scenario-card" id="scenario-text">
+                <!-- Gerado via JS -->
+            </div>
+            
+            <div class="classify-options">
+                <button class="classify-btn" onclick="checkClassification('Científica')">Científica</button>
+                <button class="classify-btn" onclick="checkClassification('Industrial')">Industrial</button>
+                <button class="classify-btn" onclick="checkClassification('Legal')">Legal</button>
+            </div>
+        </div>
+
+        <!-- ETAPA 3: QUIZ -->
+        <div id="stage3-screen" class="screen">
+            <div class="instruction">Etapa 3: Quiz Final</div>
+            
+            <div class="quiz-question" id="quiz-question-text">
+                <!-- Gerado via JS -->
+            </div>
+            
+            <div class="quiz-options" id="quiz-options-container">
+                <!-- Gerado via JS -->
             </div>
         </div>
 
         <!-- TELA FINAL -->
         <div id="end-screen" class="screen">
-            <h1>Fim de Jogo!</h1>
-            <p>Sua pontuação final foi:</p>
-            <div class="score-text" id="final-score">0/5</div>
-            <p id="feedback-message">Muito bem!</p>
-            <button onclick="restartGame()" style="margin-top: 1rem;">Jogar Novamente</button>
+            <div style="text-align: center; margin-top: 20px;">
+                <h2 style="color: var(--primary-dark);">Missão Cumprida!</h2>
+                <div class="score-display" id="final-score">100%</div>
+                <p id="final-message" style="color: var(--text-light); line-height: 1.5; margin-bottom: 30px;">
+                    Excelente trabalho. Você dominou os conceitos iniciais da Metrologia.
+                </p>
+            </div>
+            <button class="btn-main" onclick="location.reload()">Jogar Novamente</button>
         </div>
+
+        <!-- Overlay de Feedback (Certo/Errado) -->
+        <div id="feedback-overlay" class="feedback-overlay">
+            <div id="feedback-icon" class="feedback-icon">✅</div>
+            <h2 id="feedback-title">Correto!</h2>
+        </div>
+
     </div>
 
     <script>
-        // Banco de perguntas (Esboço inicial com 5 perguntas)
-        const questions = [
+        // --- DADOS DO JOGO (Baseado na aula) ---
+
+        // Etapa 1 Dados
+        const matchData = [
+            { id: 1, term: "Metrologia", def: "A Ciência da Medição" },
+            { id: 2, term: "INMETRO", def: "Órgão de avaliação da conformidade" },
+            { id: 3, term: "VIM", def: "Vocabulário Internacional de Termos" }
+        ];
+
+        // Etapa 2 Dados
+        const classifyData = [
+            { text: "Lida com os padrões de medição internacionais e pesquisas de alto nível laboratorial.", type: "Científica" },
+            { text: "Garante a confiabilidade das medições realizadas no dia a dia dentro de uma fábrica.", type: "Industrial" }
+        ];
+
+        // Etapa 3 Dados
+        const quizData = [
             {
-                question: "Qual é o maior planeta do Sistema Solar?",
-                options: ["Terra", "Marte", "Júpiter", "Saturno"],
-                answerIndex: 2 // Júpiter
+                q: "Qual é a origem da palavra Metrologia?",
+                opts: ["Latim: Metro + Logia", "Grego: Metron (medida) + Logos (ciência)", "Inglês: Meter + Logic"],
+                ans: 1
             },
             {
-                question: "Quem pintou a famosa obra 'Mona Lisa'?",
-                options: ["Vincent van Gogh", "Pablo Picasso", "Michelangelo", "Leonardo da Vinci"],
-                answerIndex: 3 // Leonardo da Vinci
-            },
-            {
-                question: "Qual é o elemento químico cujo símbolo é a letra 'O'?",
-                options: ["Ouro", "Oxigênio", "Ósmio", "Prata"],
-                answerIndex: 1 // Oxigênio
-            },
-            {
-                question: "Em que ano o homem pisou na Lua pela primeira vez?",
-                options: ["1959", "1965", "1969", "1971"],
-                answerIndex: 2 // 1969
-            },
-            {
-                question: "Qual é a capital da Austrália?",
-                options: ["Sydney", "Melbourne", "Camberra", "Brisbane"],
-                answerIndex: 2 // Camberra
+                q: "Segundo Lord Kelvin, o que acontece quando não podemos expressar algo em números?",
+                opts: ["O conhecimento é limitado e insatisfatório.", "A medição se torna obsoleta.", "Devemos usar apenas a metrologia industrial."],
+                ans: 0
             }
         ];
 
-        // Variáveis de estado do jogo
-        let currentQuestionIndex = 0;
-        let score = 0;
-
-        // Elementos do DOM
-        const startScreen = document.getElementById('start-screen');
-        const gameScreen = document.getElementById('game-screen');
-        const endScreen = document.getElementById('end-screen');
-        const questionText = document.getElementById('question-text');
-        const optionsContainer = document.getElementById('options-container');
-        const questionProgress = document.getElementById('question-progress');
-        const scoreDisplay = document.getElementById('score-display');
-        const finalScore = document.getElementById('final-score');
-        const feedbackMessage = document.getElementById('feedback-message');
-
-        // Função para alternar entre as telas
-        function showScreen(screenElement) {
-            startScreen.classList.remove('active');
-            gameScreen.classList.remove('active');
-            endScreen.classList.remove('active');
-            screenElement.classList.add('active');
+        // --- VARIÁVEIS DE ESTADO ---
+        let currentProgress = 0;
+        let totalSteps = matchData.length + classifyData.length + quizData.length;
+        
+        // --- FUNÇÕES DE UTILIDADE ---
+        function updateProgress() {
+            currentProgress++;
+            const pct = (currentProgress / totalSteps) * 100;
+            document.getElementById('progress').style.width = pct + '%';
         }
 
-        // Inicia o jogo
-        function startGame() {
-            currentQuestionIndex = 0;
-            score = 0;
-            updateScoreDisplay();
-            loadQuestion();
-            showScreen(gameScreen);
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
         }
 
-        // Carrega a pergunta atual
-        function loadQuestion() {
-            const currentQuestion = questions[currentQuestionIndex];
-            
-            // Atualiza textos
-            questionText.textContent = currentQuestion.question;
-            questionProgress.textContent = `Pergunta ${currentQuestionIndex + 1}/${questions.length}`;
-            
-            // Limpa as opções anteriores
-            optionsContainer.innerHTML = '';
+        function showFeedback(isCorrect, callback) {
+            const overlay = document.getElementById('feedback-overlay');
+            const icon = document.getElementById('feedback-icon');
+            const title = document.getElementById('feedback-title');
 
-            // Cria os botões para cada opção
-            currentQuestion.options.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.classList.add('option-btn');
-                button.onclick = () => checkAnswer(index, button);
-                optionsContainer.appendChild(button);
+            if(isCorrect) {
+                icon.textContent = "✅";
+                title.textContent = "Correto!";
+                title.style.color = "var(--correct)";
+            } else {
+                icon.textContent = "❌";
+                title.textContent = "Incorreto!";
+                title.style.color = "var(--incorrect)";
+            }
+
+            overlay.style.display = 'flex';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                if(callback) callback();
+            }, 1000);
+        }
+
+        // --- ETAPA 1: LÓGICA ---
+        let selectedTerm = null;
+        let selectedDef = null;
+        let matchedCount = 0;
+
+        function startStage1() {
+            showScreen('stage1-screen');
+            document.getElementById('stage-subtitle').textContent = "Etapa 1: Associação";
+            
+            const termsCol = document.getElementById('terms-col');
+            const defsCol = document.getElementById('defs-col');
+            
+            // Embaralha definições
+            let shuffledDefs = [...matchData].sort(() => Math.random() - 0.5);
+
+            matchData.forEach(item => {
+                let btnT = document.createElement('button');
+                btnT.className = 'match-btn';
+                btnT.textContent = item.term;
+                btnT.onclick = () => handleTermClick(btnT, item.id);
+                termsCol.appendChild(btnT);
+            });
+
+            shuffledDefs.forEach(item => {
+                let btnD = document.createElement('button');
+                btnD.className = 'match-btn';
+                btnD.textContent = item.def;
+                btnD.onclick = () => handleDefClick(btnD, item.id);
+                defsCol.appendChild(btnD);
             });
         }
 
-        // Verifica a resposta do jogador
-        function checkAnswer(selectedIndex, selectedButton) {
-            const currentQuestion = questions[currentQuestionIndex];
-            const correctIndex = currentQuestion.answerIndex;
-            const allButtons = optionsContainer.querySelectorAll('.option-btn');
+        function handleTermClick(btn, id) {
+            if(btn.classList.contains('matched')) return;
+            document.querySelectorAll('#terms-col .match-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedTerm = { btn, id };
+            checkMatch();
+        }
 
-            // Desabilita todos os botões para evitar múltiplos cliques
-            allButtons.forEach(btn => btn.disabled = true);
+        function handleDefClick(btn, id) {
+            if(btn.classList.contains('matched')) return;
+            document.querySelectorAll('#defs-col .match-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedDef = { btn, id };
+            checkMatch();
+        }
 
-            // Verifica se acertou ou errou
-            if (selectedIndex === correctIndex) {
-                selectedButton.classList.add('correct');
-                score++;
-                updateScoreDisplay();
-            } else {
-                selectedButton.classList.add('incorrect');
-                // Mostra qual era a certa
-                allButtons[correctIndex].classList.add('correct');
-            }
-
-            // Aguarda um momento para mostrar o resultado e passa para a próxima
-            setTimeout(() => {
-                currentQuestionIndex++;
-                
-                if (currentQuestionIndex < questions.length) {
-                    loadQuestion();
+        function checkMatch() {
+            if(selectedTerm && selectedDef) {
+                if(selectedTerm.id === selectedDef.id) {
+                    // Acertou
+                    selectedTerm.btn.classList.remove('selected');
+                    selectedTerm.btn.classList.add('matched');
+                    selectedDef.btn.classList.remove('selected');
+                    selectedDef.btn.classList.add('matched');
+                    matchedCount++;
+                    updateProgress();
+                    
+                    if(matchedCount === matchData.length) {
+                        document.getElementById('btn-next-stage1').disabled = false;
+                    }
                 } else {
-                    endGame();
+                    // Errou (apenas reseta a seleção visualmente para o usuário tentar denovo)
+                    setTimeout(() => {
+                        selectedTerm.btn.classList.remove('selected');
+                        selectedDef.btn.classList.remove('selected');
+                    }, 400);
                 }
-            }, 1200); // 1.2 segundos de espera
+                selectedTerm = null;
+                selectedDef = null;
+            }
         }
 
-        // Atualiza a pontuação na tela durante o jogo
-        function updateScoreDisplay() {
-            scoreDisplay.textContent = `Pontos: ${score}`;
+        // --- ETAPA 2: LÓGICA ---
+        let currentScenario = 0;
+
+        function startStage2() {
+            showScreen('stage2-screen');
+            document.getElementById('stage-subtitle').textContent = "Etapa 2: Pilares da Metrologia";
+            loadScenario();
         }
 
-        // Finaliza o jogo e mostra o resultado
-        function endGame() {
-            finalScore.textContent = `${score} / ${questions.length}`;
-            
-            // Mensagem personalizada baseada no resultado
-            if (score === questions.length) {
-                feedbackMessage.textContent = "Perfeito! Você sabe tudo!";
-            } else if (score >= 3) {
-                feedbackMessage.textContent = "Muito bem! Bom conhecimento geral.";
+        function loadScenario() {
+            if(currentScenario < classifyData.length) {
+                document.getElementById('scenario-text').textContent = classifyData[currentScenario].text;
             } else {
-                feedbackMessage.textContent = "Continue praticando, na próxima você vai melhor!";
+                startStage3();
+            }
+        }
+
+        function checkClassification(type) {
+            const isCorrect = classifyData[currentScenario].type === type;
+            if(isCorrect) {
+                updateProgress();
+            }
+            // Para simplificar, avança mesmo se errar, mas mostra o feedback
+            showFeedback(isCorrect, () => {
+                currentScenario++;
+                loadScenario();
+            });
+        }
+
+        // --- ETAPA 3: LÓGICA ---
+        let currentQuiz = 0;
+
+        function startStage3() {
+            showScreen('stage3-screen');
+            document.getElementById('stage-subtitle').textContent = "Etapa 3: Quiz Rápido";
+            loadQuiz();
+        }
+
+        function loadQuiz() {
+            if(currentQuiz < quizData.length) {
+                const qData = quizData[currentQuiz];
+                document.getElementById('quiz-question-text').textContent = qData.q;
+                
+                const optsContainer = document.getElementById('quiz-options-container');
+                optsContainer.innerHTML = '';
+                
+                qData.opts.forEach((opt, index) => {
+                    let btn = document.createElement('button');
+                    btn.className = 'quiz-btn';
+                    btn.textContent = opt;
+                    btn.onclick = () => checkQuiz(index, btn, qData.ans);
+                    optsContainer.appendChild(btn);
+                });
+            } else {
+                showScreen('end-screen');
+                document.getElementById('stage-subtitle').textContent = "Conclusão";
+            }
+        }
+
+        function checkQuiz(selectedIndex, btn, correctIndex) {
+            // Desabilita botões
+            document.querySelectorAll('.quiz-btn').forEach(b => b.disabled = true);
+            
+            const isCorrect = selectedIndex === correctIndex;
+            
+            if(isCorrect) {
+                btn.classList.add('correct');
+                updateProgress();
+            } else {
+                btn.classList.add('incorrect');
+                document.querySelectorAll('.quiz-btn')[correctIndex].classList.add('correct');
             }
 
-            showScreen(endScreen);
+            setTimeout(() => {
+                currentQuiz++;
+                loadQuiz();
+            }, 1500);
         }
 
-        // Reinicia o jogo
-        function restartGame() {
-            startGame();
-        }
     </script>
 </body>
 </html>
